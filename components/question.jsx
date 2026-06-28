@@ -24,7 +24,7 @@ const Question = ({ id }) => {
         <View style={styles.question}>
             {questionData.map((question => (
                 question.id === id ? (
-                    <>
+                    <React.Fragment key={question.id}>
                         <View style={styles.questionBackground}>
                             <Text style={styles.questionNumber}>{question.id}</Text>
                         </View>
@@ -32,7 +32,7 @@ const Question = ({ id }) => {
                             <Text style={styles.questionTitle}>{question.title}</Text>
                             <Text style={styles.questionSubTitle}>{question.subtitle}</Text>
                         </View>
-                    </>
+                    </React.Fragment>
                 ) : null
             )))}
         </View>

@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import {View, TextInput, StyleSheet, ScrollView, TouchableOpacity, Text} from 'react-native';
-import Question from "./question";
+import {View, StyleSheet, ScrollView} from 'react-native';
+import Form from "@/components/Form";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { moviesData } from "@/data/movies";
+import { openai, supabase } from "@/config";
 
 const Main = () => {
     const [data, setData] = useState({
@@ -9,47 +12,43 @@ const Main = () => {
         genreMovie: '',
     });
 
+    async function splitText(data) {
+        const splitter = new RecursiveCharacterTextSplitter({
+            chunkSize: 200,
+            chunkOverlap: 26
+        })
+
+        const output = await splitter.createDocuments([data]);
+        console.log(output);
+        return output
+    }
+    async function createAndStoreEmbeddings() {
+        const chunkData = await splitText(moviesData);
+        const data = await Promise.all(
+            chunkData.map(async (chunk) => {
+                const embedding = await openai.embeddings.create({
+                    model: "text-embedding-ada-002",
+                    input: chunk.pageContent
+                })
+
+                return {
+                    content: chunk.pageContent,
+                    embedding: embedding.data[0].embedding
+                }
+            })
+        )
+        console.error("SUCCESS!!")
+        await supabase.from('movies').insert(data)
+    }
+
+
+    async function handleSubmit() {
+    }
+
     return (
         <ScrollView style={styles.container}>
             <View style={styles.content}>
-                <Question id={1}/>
-                <TextInput
-                    style={styles.textarea}
-                    multiline
-                    numberOfLines={4}
-                    placeholder={"Cars 3, pentru că..."}
-                    placeholderTextColor="#91a9b2"
-                    value={data.favMovie}
-                    onChangeText={text => setData({ ...data, favMovie: text })}
-                />
-
-                <Question id={2}/>
-                <TextInput
-                    style={styles.textarea}
-                    multiline
-                    numberOfLines={4}
-                    placeholder={"Prefer cele vechi..."}
-                    placeholderTextColor="#91a9b2"
-                    value={data.favMovie}
-                    onChangeText={text => setData({ ...data, favReleaseDate: text })}
-                />
-
-                <Question id={3}/>
-                <TextInput
-                    style={styles.textarea}
-                    multiline
-                    numberOfLines={4}
-                    placeholder={"Aș vrea să mă amuz..."}
-                    placeholderTextColor="#91a9b2"
-                    value={data.favMovie}
-                    onChangeText={text => setData({ ...data, genreMovie: text })}
-                />
-                <TouchableOpacity
-                    activeOpacity={0.8}
-                    style={styles.button}
-                >
-                    <Text style={styles.buttonText}>CAUTĂ</Text>
-                </TouchableOpacity>
+                <Form data={data} setData={setData} handleSubmit={handleSubmit} />
             </View>
         </ScrollView>
     );
@@ -69,32 +68,4 @@ const styles = StyleSheet.create({
         marginHorizontal: 40,
         marginVertical: 40,
     },
-    textarea: {
-        width: '100%',
-        minHeight: 100,
-        marginVertical: 32,
-        padding: 12,
-        backgroundColor: '#2a3547',
-        borderWidth: 1,
-        borderColor: '#414e62',
-        borderRadius: 10,
-        fontSize: 16,
-        fontFamily: 'Rubik_400Regular',
-        color: "white",
-        textAlignVertical: 'top',
-    },
-    button: {
-        width: '100%',
-        backgroundColor: '#57e88b',
-        alignItems: "center",
-        padding: 16,
-        borderRadius: 10,
-    },
-    buttonText: {
-        color: '#041022',
-        width: '100%',
-        textAlign: 'center',
-        fontFamily: 'Rubik_700Bold',
-        fontSize: 16,
-    }
 })
