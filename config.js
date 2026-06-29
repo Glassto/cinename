@@ -16,6 +16,27 @@ const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
 if (!url) throw new Error(`Expected env var SUPABASE_URL`);
 export const supabase = createClient(url, privateKey);
 
+/** TMDB config */
+const apiKey = process.env.EXPO_PUBLIC_TMDB_API_KEY;
+if(!apiKey) throw new Error(`Expected env var TMDB_API_KEY`);
+const baseUrl = 'https://api.themoviedb.org/3'
+const endpoint = ''
+export const tmdb = async (query) => {
+    const url = `${baseUrl}/search/multi?api_key=${apiKey}&query=${encodeURIComponent(query)}`
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const results = data.results.filter(item => item.media_type !== 'person');
+
+        return results;
+    } catch (e) {
+        console.error("Fetch failed:", e.message);
+    }
+}
+
 /** LangChain Splitter */
 // async function splitText(data) {
 //     const splitter = new RecursiveCharacterTextSplitter({
