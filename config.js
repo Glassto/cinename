@@ -22,7 +22,7 @@ if(!apiKey) throw new Error(`Expected env var TMDB_API_KEY`);
 const baseUrl = 'https://api.themoviedb.org/3'
 const endpoint = ''
 export const tmdb = async (query) => {
-    const url = `${baseUrl}/search/multi?api_key=${apiKey}&query=${encodeURIComponent(query)}`
+    const url = `${baseUrl}/search/multi?api_key=${apiKey}&query=${encodeURIComponent(query)}&language=ro-RO`
     try {
         const response = await fetch(url);
         if (!response.ok) {

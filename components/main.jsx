@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import {View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform} from 'react-native';
+import {View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Text} from 'react-native';
 import Form from "@/components/Form";
+import Loading from "@/components/Loading";
+import Suggestion from "@/components/Suggestion";
 import {openai, supabase, tmdb} from "@/config";
 
 const Main = () => {
@@ -9,44 +11,89 @@ const Main = () => {
         favReleaseDate: '',
         genreMovie: '',
     });
+    const [isLoading, setIsLoading] = useState(false);
+    const [movieData, setMovieData] = useState({});
 
-    async function queryEmbedding(query) {
-        const embedding = await openai.embeddings.create({
-            model: "text-embedding-ada-002",
-            input: query,
-        })
+    async function getSuggestions() {
+        const messages = [
+            {
+                role: "system",
+                content: `
+You are a movie recommendation engine for a mobile app. You will receive three pieces of information from the user, based on answers to these questions asked in the app:
+1. Their favorite movie, and why they like it.
+2. Whether they prefer newer releases or more classic movies.
+3. Whether they want something funny or something more serious.
 
-        const { data } = await supabase.rpc("match_movies", {
-            query_embedding: embedding.data[0].embedding,
-            match_threshold: 0.5,
-            match_count: 1,
-        })
+Using this information, recommend exactly 1 movie or TV Show that best match their taste, preferences, and desired tone.
 
-        return data[0].content
+STRICT OUTPUT RULES:
+- Respond with ONLY the movie or TV Show titles, nothing else.
+- Output exactly 1 title.
+- Do not include numbering, bullet points, dashes, or any symbols.
+- Do not include release years, explanations, descriptions, greetings, or any additional text.
+- Do not repeat the movie the user mentioned as their favorite.
+- Do not include any text before or after the list of titles.
+- Use the official, original movie title as it would appear in a movie database (this is critical, since the output will be used to query the TMDB API directly).
+- If a title is ambiguous (e.g., same name used for multiple movies), prefer the most well-known / highest-rated version.
+- Every title MUST BE in Romanian!!
+
+Example of a valid response:
+Inception
+The Grand Budapest Hotel
+Parasite
+La La Land
+Whiplash
+
+Any deviation from this format is not acceptable, as the output is parsed programmatically.`
+            }
+        ]
+        messages.push(
+            {
+                role: "user",
+                content: `
+1. Their favorite movie, and why they like it: ${data.favMovie}
+2. Whether they prefer newer releases or more classic movies: ${data.favReleaseDate}
+3. Whether they want something funny or something more serious: ${data.genreMovie}
+                `
+            }
+        )
+
+        try {
+            const response = await openai.chat.completions.create({
+                model: "gpt-4.1-nano",
+                messages,
+            })
+
+            return response.choices[0].message.content
+        } catch (e) {
+            console.error(`There was an error with the OpenAI response: ${e}`);
+        }
     }
 
     async function handleSubmit() {
-        // const query = `1. ${data.favMovie},\n 2. ${data.favReleaseDate},\n 3. ${data.genreMovie}`;
-        // const match = await queryEmbedding(query)
-        // const chatMessages = [
-        //     {
-        //         role: "system",
-        //         content: "You are an enthusiastic movie expert who loves recommending films to people. You will receive context containing movie details (plot summaries, genres, directors, themes) AND the user's answers to three specific preference questions:\n1. Their favorite movie and why\n2. Whether they prefer newer releases or classic films\n3. Whether they want something funny or serious\n\nYour main job is to formulate a short, personalized movie recommendation using ONLY the provided context and the user's answers. \n\n### Critical Rules:\n- **Strict Context Adherence**: Base all recommendations strictly on the provided context. If you cannot find a suitable match in the context, say, \"Sorry, I don't know the answer.\" Do not make up movies or details.\n- **Personalization**: Use the user's three answers to match movies based on themes, pacing, visual style, and emotional tone found in the context.\n- **Conciseness**: Keep answers short and focused on the user's query.\n- **No Questions**: Do not ask the user any questions. Their preferences are already provided in the input.\n- **Uncertainty**: If the context lacks sufficient information to answer, explicitly state uncertainty rather than hallucinating details."
-        //     }
-        // ]
-        //
-        // chatMessages.push({
-        //     role: 'user',
-        //     content: `Context: ${match} - The answers for those 3 questions: ${query}`
-        // })
-        // const response = await openai.chat.completions.create({
-        //     model: "gpt-4.1-nano",
-        //     messages: chatMessages,
-        //     frequency_penalty: 0.5
-        // })
+        setIsLoading(true);
+        const suggestion = await getSuggestions();
 
-        const tmdbResponse = await tmdb('Cars 3')
-        console.error(tmdbResponse)
+        try {
+            const tmdbResponse = await tmdb(suggestion);
+
+            setMovieData(tmdbResponse[0]);
+            setIsLoading(false);
+        } catch (e) {
+            console.error(`There was an error getting suggestions: ${e}`);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    function reset() {
+        setIsLoading(false);
+        setMovieData({});
+        setData({
+            favMovie: '',
+            favReleaseDate: '',
+            genreMovie: '',
+        });
     }
 
     return (
@@ -55,9 +102,15 @@ const Main = () => {
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
             <ScrollView style={styles.container}>
-                    <View style={styles.content}>
+                <View style={styles.content}>
+                    { isLoading ? (
+                        <Loading />
+                    ) : movieData?.id ? (
+                        <Suggestion data={movieData} reset={reset} />
+                    ) : (
                         <Form data={data} setData={setData} handleSubmit={handleSubmit} />
-                    </View>
+                    )}
+                </View>
             </ScrollView>
         </KeyboardAvoidingView>
     );
@@ -73,8 +126,6 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 60
     },
     content: {
-        flex: 1,
-        marginHorizontal: 40,
-        marginVertical: 40,
-    },
+        flex: 1
+    }
 })

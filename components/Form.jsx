@@ -4,7 +4,7 @@ import Question from "./question";
 
 const Form = ({ data, setData, handleSubmit }) => {
     return (
-        <>
+        <View style={styles.container}>
             <Question id={1}/>
             <TextInput
                 style={styles.textarea}
@@ -44,13 +44,18 @@ const Form = ({ data, setData, handleSubmit }) => {
             >
                 <Text style={styles.buttonText} >CAUTĂ</Text>
             </TouchableOpacity>
-        </>
+        </View>
     );
 };
 
 export default Form;
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        paddingHorizontal: 40,
+        paddingVertical: 40,
+    },
     textarea: {
         width: '100%',
         minHeight: 100,
