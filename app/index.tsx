@@ -3,9 +3,9 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts, Rubik_400Regular, Rubik_600SemiBold, Rubik_700Bold} from "@expo-google-fonts/rubik";
 import * as SplashScreen from 'expo-splash-screen'
-import Logo from "@/components/logo";
-import Hero from "@/components/hero"
-import Main from "../components/main"
+import Logo from "../components/Logo";
+import Hero from "../components/Hero"
+import Main from "../components/Main"
 
 SplashScreen.preventAutoHideAsync();
 

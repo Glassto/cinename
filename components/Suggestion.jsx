@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        marginTop: "auto",
+        justifyContent: 'flex-start',
     },
     poster: {
         width: "100%",
@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderTopLeftRadius: 44,
 
-        marginBottom: 40,
     },
     placeholder: {
         width: 300,
@@ -70,18 +69,17 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 20
     },
     placeholderText: { color: '#888' },
     header: {
-        flex: 1,
+        marginVertical: 20,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
     },
     title: {
-        fontSize: 30,
-        maxWidth: 300,
+        fontSize: 28,
+        maxWidth: 260,
         fontFamily: 'Rubik_700Bold',
         color: '#fff',
     },
@@ -105,7 +103,7 @@ const styles = StyleSheet.create({
         lineHeight: 22
     },
     button: {
-        marginTop: 150,
+        marginBottom: 20,
         width: '100%',
         backgroundColor: '#57e88b',
         alignItems: "center",

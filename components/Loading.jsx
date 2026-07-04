@@ -1,10 +1,29 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
 
 const Loading = () => {
+    const rotateAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        Animated.loop(
+            Animated.timing(rotateAnim, {
+                toValue: 1,
+                duration: 900,
+                easing: Easing.linear,
+                useNativeDriver: true,
+            })
+        ).start();
+    }, []);
+
+    const spin = rotateAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg'],
+    });
+
     return (
         <View style={styles.loading}>
-            <Text style={styles.loadingText}>Se încarcă...</Text>
+            <Animated.View style={[styles.spinner, { transform: [{ rotate: spin }] }]} />
+            <Text style={styles.loadingText}>Se încarcă...    </Text>
         </View>
     );
 };
@@ -14,11 +33,23 @@ export default Loading;
 const styles = StyleSheet.create({
     loading: {
         flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 16,
+    },
+    spinner: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        borderWidth: 3,
+        borderColor: 'rgba(87, 232, 139, 0.25)',
+        borderTopColor: '#57e88b',
     },
     loadingText: {
-        width: "100%",
-        color: "white"
-    }
-})
+        textAlign: 'center',
+        width: '100%',
+        color: 'white',
+        fontSize: 14,
+    },
+});

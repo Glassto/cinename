@@ -22,18 +22,17 @@ if(!apiKey) throw new Error(`Expected env var TMDB_API_KEY`);
 const baseUrl = 'https://api.themoviedb.org/3'
 const endpoint = ''
 export const tmdb = async (query) => {
-    const url = `${baseUrl}/search/multi?api_key=${apiKey}&query=${encodeURIComponent(query)}&language=ro-RO`
+    const url = `${baseUrl}/search/multi?api_key=${apiKey}&query=${encodeURIComponent(query)}&language=ro-RO`;
     try {
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        const results = data.results.filter(item => item.media_type !== 'person');
-
-        return results;
+        return (data.results || []).filter(item => item.media_type !== 'person');
     } catch (e) {
         console.error("Fetch failed:", e.message);
+        throw e;
     }
 }
 

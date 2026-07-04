@@ -1,50 +1,52 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, TextInput, StyleSheet} from 'react-native';
-import Question from "./question";
+import {View, Text, TouchableOpacity, TextInput, StyleSheet, ScrollView} from 'react-native';
+import Question from "./Question";
 
 const Form = ({ data, setData, handleSubmit }) => {
     return (
-        <View style={styles.container}>
-            <Question id={1}/>
-            <TextInput
-                style={styles.textarea}
-                multiline
-                numberOfLines={4}
-                placeholder={"Cars 3, pentru că..."}
-                placeholderTextColor="#91a9b2"
-                value={data.favMovie}
-                onChangeText={text => setData({ ...data, favMovie: text })}
-            />
+        <ScrollView style={styles.container}>
+            <View style={styles.content}>
+                <Question id={1}/>
+                <TextInput
+                    style={styles.textarea}
+                    multiline
+                    numberOfLines={4}
+                    placeholder={"Cars 3, pentru că..."}
+                    placeholderTextColor="#91a9b2"
+                    value={data.favMovie}
+                    onChangeText={text => setData({ ...data, favMovie: text })}
+                />
 
-            <Question id={2}/>
-            <TextInput
-                style={styles.textarea}
-                multiline
-                numberOfLines={4}
-                placeholder={"Prefer cele vechi..."}
-                placeholderTextColor="#91a9b2"
-                value={data.favReleaseDate}
-                onChangeText={text => setData({ ...data, favReleaseDate: text })}
-            />
+                <Question id={2}/>
+                <TextInput
+                    style={styles.textarea}
+                    multiline
+                    numberOfLines={4}
+                    placeholder={"Prefer cele vechi..."}
+                    placeholderTextColor="#91a9b2"
+                    value={data.favReleaseDate}
+                    onChangeText={text => setData({ ...data, favReleaseDate: text })}
+                />
 
-            <Question id={3}/>
-            <TextInput
-                style={styles.textarea}
-                multiline
-                numberOfLines={4}
-                placeholder={"Aș vrea să mă amuz..."}
-                placeholderTextColor="#91a9b2"
-                value={data.genreMovie}
-                onChangeText={text => setData({ ...data, genreMovie: text })}
-            />
-            <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.button}
-                onPress={handleSubmit}
-            >
-                <Text style={styles.buttonText} >CAUTĂ</Text>
-            </TouchableOpacity>
-        </View>
+                <Question id={3}/>
+                <TextInput
+                    style={styles.textarea}
+                    multiline
+                    numberOfLines={4}
+                    placeholder={"Aș vrea să mă amuz..."}
+                    placeholderTextColor="#91a9b2"
+                    value={data.genreMovie}
+                    onChangeText={text => setData({ ...data, genreMovie: text })}
+                />
+                <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={styles.button}
+                    onPress={handleSubmit}
+                >
+                    <Text style={styles.buttonText} >CAUTĂ</Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
     );
 };
 
@@ -52,6 +54,12 @@ export default Form;
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+        backgroundColor: '#1d2838',
+        height: '100%',
+        borderTopLeftRadius: 60,
+    },
+    content: {
         flex: 1,
         paddingHorizontal: 40,
         paddingVertical: 40,
