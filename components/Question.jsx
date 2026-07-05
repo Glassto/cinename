@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 20,
         alignItems: 'center',
-        marginRight: 10
     },
     questionBackground: {
         height: 40,
@@ -65,13 +64,14 @@ const styles = StyleSheet.create({
     questionTitle: {
         fontSize: 20,
         fontFamily: 'Rubik_600SemiBold',
-        marginRight: 20,
+        marginRight: 50,
         color: "white",
     },
     questionSubTitle: {
         margin: 0,
         fontSize: 14,
         fontFamily: 'Rubik_400Regular',
+        marginRight: 50,
         color: "#91a9b2"
     }
 })

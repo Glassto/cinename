@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Text } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, Platform, Text } from 'react-native';
 import Form from "@/components/Form";
 import Loading from "@/components/Loading";
 import Suggestion from "@/components/Suggestion";
@@ -66,8 +66,14 @@ Inception`
     }
 
     async function handleSubmit() {
+        if (!data.favMovie || !data.favReleaseDate || !data.genreMovie) {
+            setError("Pentru a căuta, răspunde la fiecare întrebare.");
+            return
+        }
+
         setIsLoading(true);
         setError(null);
+
 
         try {
             const title = await getSuggestion();
@@ -76,6 +82,7 @@ Inception`
             const movie = results?.[0];
 
             if (!movie?.id) {
+                setError("Nu am putut găsi un film. Încearcă din nou.");
                 throw new Error(`No TMDB result found for "${title}"`);
             }
 
@@ -103,6 +110,7 @@ Inception`
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={0}
         >
             <View style={styles.container}>
                 {isLoading ? (

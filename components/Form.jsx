@@ -61,8 +61,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        paddingHorizontal: 40,
-        paddingVertical: 40,
+        padding: 40,
     },
     textarea: {
         width: '100%',

@@ -16,7 +16,7 @@ const Suggestion = ({ data, reset }) => {
                         source={{ uri: posterUrl }}
                         style={styles.poster}
                         contentFit="cover"
-                        transition={300}
+                        transition={200}
                     />
                 ) : (
                     <View style={styles.placeholder}>
@@ -30,7 +30,7 @@ const Suggestion = ({ data, reset }) => {
                         <Text style={styles.mediaText}>{data.media_type === 'movie' ? "Film " : "Serial  "}</Text>
                     </View>
                 </View>
-                <Text style={styles.overview} numberOfLines={5}>{data.overview}</Text>
+                <Text style={styles.overview} numberOfLines={6}>{data.overview}</Text>
             </View>
             <TouchableOpacity
                 activeOpacity={0.8}
