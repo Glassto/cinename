@@ -2,7 +2,7 @@
   "expo": {
     "name": "cinename",
     "slug": "cinename",
-    "version": "1.0.2",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "cinename",
@@ -52,6 +52,12 @@
       "eas": {
         "projectId": "ae9b1f87-e0c2-4c5b-b636-6c3467aeabd2"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ae9b1f87-e0c2-4c5b-b636-6c3467aeabd2"
     }
   }
 }
