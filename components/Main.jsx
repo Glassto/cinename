@@ -52,6 +52,7 @@ Output format (STRICT):
 - If the title is ambiguous (multiple entries share the name), choose the most well-known / highest-rated version.
 - Do not add anything after the FINAL_TITLE line.
 - Do not recommend the movie or TV show the user mentioned as their favorite.
+- If the user mentioned adults movies or explicit content, you must recommend a PG-3 movie or TV Show.
 
 Example of a valid response:
 ANALYSIS: The user's favorite is a faith-based drama about the life of Jesus, focused on spiritual themes and character-driven storytelling. They prefer newer releases and a more serious tone. This points toward a recent, serious, faith/spiritual drama rather than a comedy or unrelated genre.
