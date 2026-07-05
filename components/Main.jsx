@@ -20,28 +20,42 @@ const Main = () => {
             {
                 role: "system",
                 content: `
-You are a movie recommendation engine for a mobile app. You will receive three pieces of information from the user, based on answers to these questions asked in the app:
-1. Their favorite movie, and why they like it.
-2. Whether they prefer newer releases or more classic movies.
+You are a movie and TV show recommendation engine for a mobile app.
+
+You will receive three pieces of information from the user, based on answers to questions asked in the app:
+1. Their favorite movie or show, and why they like it.
+2. Whether they prefer newer releases or more classic titles.
 3. Whether they want something funny or something more serious.
 
-Using this information, recommend exactly 1 movie or TV Show that best match their taste, preferences, and desired tone.
+Your task has two steps.
 
-STRICT OUTPUT RULES:
-- Respond with ONLY the movie or TV Show title, nothing else.
-- Output exactly 1 title.
-- Do not include numbering, bullet points, dashes, or any symbols.
-- Do not include release years, explanations, descriptions, greetings, or any additional text.
-- Do not repeat the movie the user mentioned as their favorite.
-- Do not include any text before or after the title.
-- Use the official, original movie title as it would appear in a movie database (this is critical, since the output will be used to query the TMDB API directly).
-- If a title is ambiguous (e.g., same name used for multiple movies), prefer the most well-known / highest-rated version.
-- Always use the English title as listed on TMDB (the "title" field, not "original_title").
-- If no official English title exists, use the most widely recognized international title.
-- YOU CAN SUGGEST ONLY 1 TITLE!!
+STEP 1 — INTERNAL ANALYSIS (write this out, it will be stripped before showing to the user):
+Analyze the user's favorite title in depth. Identify:
+- Genre(s) of the favorite title
+- Tone and mood (e.g. lighthearted, dramatic, spiritual, dark, uplifting)
+- Core themes and message (what the story is fundamentally about)
+- Time period / setting
+- Notable actors or director style, if relevant
+- Any specific subject matter that clearly matters to the user (e.g. religious/faith themes, historical events, a specific culture, a specific real-world profession)
+Then combine this analysis with the user's stated preference for new vs. classic, and funny vs. serious, to build a clear recommendation profile.
+
+Do not ignore an obvious defining trait of the favorite title. For example, if the favorite title is clearly built around a religious/faith narrative, a war story, a true crime case, a specific historical era, etc., the recommendation MUST respect that same core subject matter and tone, not just the surface genre label.
+
+STEP 2 — FINAL ANSWER:
+Based on your analysis, choose exactly ONE movie or TV show that best matches the full profile. It must NOT be the same title the user mentioned as their favorite.
+
+Output format (STRICT):
+- Write your Step 1 analysis first, as plain text, under a line that says "ANALYSIS:"
+- Then, on its own line, write exactly: "FINAL_TITLE: <title>"
+- The title after "FINAL_TITLE:" must be ONLY the title, with no year, no quotes, no punctuation, no extra words.
+- Use the official English title as listed on TMDB (the "title" field, not "original_title"). If no official English title exists, use the most widely recognized international title.
+- If the title is ambiguous (multiple entries share the name), choose the most well-known / highest-rated version.
+- Do not add anything after the FINAL_TITLE line.
+- Do not recommend the movie or TV show the user mentioned as their favorite.
 
 Example of a valid response:
-Inception`
+ANALYSIS: The user's favorite is a faith-based drama about the life of Jesus, focused on spiritual themes and character-driven storytelling. They prefer newer releases and a more serious tone. This points toward a recent, serious, faith/spiritual drama rather than a comedy or unrelated genre.
+FINAL_TITLE: Risen`
             },
             {
                 role: "user",
@@ -58,11 +72,35 @@ Inception`
             messages,
         });
 
-        const title = response.choices?.[0]?.message?.content?.trim();
-        if (!title) {
+        const raw = response.choices?.[0]?.message?.content?.trim();
+        if (!raw) {
             throw new Error("No suggestion returned from OpenAI");
         }
+        console.error(raw)
+
+        const title = extractFinalTitle(raw);
+        if (!title) {
+            throw new Error(`Could not parse FINAL_TITLE from response: ${raw}`);
+        }
+        console.error(title);
+
         return title;
+    }
+
+    function extractFinalTitle(raw) {
+        // Match "FINAL_TITLE:" followed by the rest of that line
+        const match = raw.match(/FINAL_TITLE:\s*(.+)/i);
+        if (!match) return null;
+
+        let title = match[1].trim();
+
+        title = title
+            .replace(/^["'“”]+|["'“”]+$/g, "") // strip leading/trailing quotes
+            .replace(/\.$/, "")                 // strip trailing period
+            .replace(/\*\*/g, "")               // strip stray markdown bold
+            .trim();
+
+        return title || null;
     }
 
     async function handleSubmit() {

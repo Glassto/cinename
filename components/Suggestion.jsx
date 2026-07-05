@@ -63,14 +63,22 @@ const styles = StyleSheet.create({
 
     },
     placeholder: {
-        width: 300,
-        height: 450,
-        backgroundColor: '#333',
-        borderRadius: 12,
+        width: '100%',
+        height: 200,
+        backgroundColor: '#2a3547',
+        borderWidth: 1,
+        borderColor: '#414e62',
+        borderRadius: 8,
+        borderTopLeftRadius: 44,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    placeholderText: { color: '#888' },
+    placeholderText: {
+        width: '100%',
+        fontFamily: 'Rubik_700Bold',
+        textAlign: 'center',
+        color: '#91a9b2',
+    },
     header: {
         marginVertical: 20,
         flexDirection: 'row',
