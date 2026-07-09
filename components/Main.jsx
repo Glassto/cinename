@@ -103,10 +103,10 @@ FINAL_TITLE: Risen`
     }
 
     async function handleSubmit() {
-        // if (!data.favMovie || !data.favReleaseDate || !data.genreMovie) {
-        //     setError("Pentru a căuta, răspunde la fiecare întrebare!");
-        //     return
-        // }
+        if (!data.favMovie || !data.favReleaseDate || !data.genreMovie) {
+            setError("Pentru a căuta, răspunde la fiecare întrebare!");
+            return
+        }
 
         setIsLoading(true);
         setError(null);
@@ -123,7 +123,7 @@ FINAL_TITLE: Risen`
                 throw new Error(`No TMDB result found for "${title}"`);
             }
 
-            console.error(movie)
+            // console.error(movie)
             setMovieData(movie);
         } catch (e) {
             console.error(e);
