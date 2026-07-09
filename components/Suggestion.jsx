@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { Image } from 'expo-image'
+import Overview from "@/components/Overview";
 
 const Suggestion = ({ data, reset }) => {
     const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'
@@ -30,6 +31,7 @@ const Suggestion = ({ data, reset }) => {
                         <Text style={styles.mediaText}>{data.media_type === 'movie' ? "Film " : "Serial  "}</Text>
                     </View>
                 </View>
+                <Overview data={data}/>
                 <Text style={styles.overview} numberOfLines={6}>{data.overview}</Text>
             </View>
             <TouchableOpacity
@@ -92,22 +94,23 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     mediaType: {
-        backgroundColor: '#343e4c',
+        backgroundColor: '#2a3547',
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#4a5360',
+        borderColor: '#414e62',
         paddingHorizontal: 12,
         paddingVertical: 4,
     },
     mediaText: {
         textAlign: 'center',
         width: '100%',
-        color: '#fff',
+        color: '#d4dbe0',
     },
     overview: {
+        paddingHorizontal: 6,
         fontSize: 14,
         fontFamily: 'Rubik_400Regular',
-        color: '#ccc',
+        color: '#aab8c0',
         lineHeight: 22
     },
     button: {

@@ -77,13 +77,11 @@ FINAL_TITLE: Risen`
         if (!raw) {
             throw new Error("No suggestion returned from OpenAI");
         }
-        console.error(raw)
 
         const title = extractFinalTitle(raw);
         if (!title) {
             throw new Error(`Could not parse FINAL_TITLE from response: ${raw}`);
         }
-        console.error(title);
 
         return title;
     }
@@ -105,10 +103,10 @@ FINAL_TITLE: Risen`
     }
 
     async function handleSubmit() {
-        if (!data.favMovie || !data.favReleaseDate || !data.genreMovie) {
-            setError("Pentru a căuta, răspunde la fiecare întrebare.");
-            return
-        }
+        // if (!data.favMovie || !data.favReleaseDate || !data.genreMovie) {
+        //     setError("Pentru a căuta, răspunde la fiecare întrebare!");
+        //     return
+        // }
 
         setIsLoading(true);
         setError(null);
@@ -125,6 +123,7 @@ FINAL_TITLE: Risen`
                 throw new Error(`No TMDB result found for "${title}"`);
             }
 
+            console.error(movie)
             setMovieData(movie);
         } catch (e) {
             console.error(e);
